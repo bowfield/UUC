@@ -9,3 +9,5 @@ This server use Datagram protocol.
 * Select port & working ip
 * Logging
 * Change nickname
+
+#[poll]
