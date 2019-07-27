@@ -1,2 +1,2 @@
 # UUC
- t.me/baddev
+UUC Server software.
