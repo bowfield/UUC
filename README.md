@@ -14,3 +14,6 @@ This server use Datagram protocol.
 1. Download this repository and compile
 2. Install JRE to you device
 3. Run command 'java -jar UUC.jar'
+
+TIP:
+Use UUC.dex to run the server on Android , command: 'dalvikvm -cp UUC.dex unicon.uuc.main'
