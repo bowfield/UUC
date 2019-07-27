@@ -10,4 +10,7 @@ This server use Datagram protocol.
 * Logging
 * Change nickname
 
-#[poll]
+# Run server
+1. Download this repository and compile
+2. Install JRE to you device
+3. Run command 'java -jar UUC.jar'
