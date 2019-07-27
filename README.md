@@ -5,7 +5,7 @@ This server use Datagram protocol.
 
 # Features
 * Works on pure UDP
-* Minimum host lo ad
+* Minimum host load
 * Select port & working ip
 * Logging
 * Change nickname
