@@ -1,3 +1,5 @@
+![Screenshot](https://github.com/qbaddev/uuc/raw/master/image.png)
+
 # UUC
 UUC Server software.
 
