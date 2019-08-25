@@ -2,8 +2,9 @@
 
 # UUC
 UUC Server software.
-
 This server use Datagram protocol.
+
+Project closed.
 
 # Features
 * Works on pure UDP
