@@ -1,10 +1,7 @@
 ![Screenshot](https://github.com/qbaddev/uuc/raw/master/image.png)
 
 # UUC
-UUC Server software.
-This server use Datagram protocol.
-
-Project closed.
+UUC Server software. This server use Datagram protocol.
 
 # Features
 * Works on pure UDP
@@ -16,7 +13,4 @@ Project closed.
 # Run server
 1. Download this repository and compile
 2. Install JRE to you device
-3. Run command 'java -jar UUC.jar'
-
-TIP:
-Use UUC.dex to run the server on Android , command: 'dalvikvm -cp UUC.dex unicon.uuc.main'
+3. Run command 'java -jar UUC.jar' (Android: 'dalvikvm -cp UUC.dex unicon.uuc.main')
