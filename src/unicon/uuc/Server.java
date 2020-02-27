@@ -18,44 +18,45 @@ import unicon.uuc.types.Client;
 import unicon.uuc.types.Plugin;
 
 public class Server extends Thread{
-    public Register register = null;
-    public String addr = null;
-    public int port = 0;
-    public SPrefs conf;
-    public DatagramSocket dsocket;
-    public HashMap<String, Client> clients = new HashMap<String, Client>();
+    public Register register = null; // Регистратор
+    public String addr = null;       // IP-адрес сервера
+    public int port = 0;             // Порт сервера
+    public SPrefs conf;              // Конфиг сервера
+    public DatagramSocket dsocket;   // Сокет сервера
+    public HashMap<String, Client> clients = new HashMap<String, Client>(); // Клиенты
     
     public Server(Register reg){
         this.register = reg;
     }
     
-    public boolean running = false;
+    public boolean running = false; // Булеан работы сервера
     @Override
     public void run(){
-        running = true;
+        running = true; // Сервер включен
         try{
             try{
                 try{
-                    this.conf = new SPrefs();
+                    this.conf = new SPrefs(); // Конфиги
                     this.port = (int) Double.parseDouble(this.conf.get("port"));
                     InetAddress in = InetAddress.getByName(this.conf.get("addr"));
                     
-                    System.out.println("# Сервер запущен на порту " + this.port + "\n -> " + this.conf.get("name"));
-                    this.dsocket = new DatagramSocket(this.port);
+                    System.out.println("# Сервер запущен на порту " +
+                            this.port + "\n -> " + this.conf.get("name"));
+                    this.dsocket = new DatagramSocket(this.port); // Создание UDP сокета
                     
                     System.out.println("# Загрузка плагинов...");
-                    API api = new API(this);
-                    PluginLoader loader = new PluginLoader();
-                    ArrayList<Plugin> plugins = loader.loadPlugins(api);
+                    API api = new API(this);                                // PluginAPI
+                    PluginLoader loader = new PluginLoader();               // PluginLoader
+                    ArrayList<Plugin> plugins = loader.loadPlugins(api);    // Загружаем плагины
                     
                     
                     while(true){
                         
                         DatagramPacket packet = new DatagramPacket(new byte[1024], 1024);
-                        dsocket.receive(packet);
+                        dsocket.receive(packet); // Принимаем пакет
                         
-                        InetAddress address = packet.getAddress();
-                        int port = packet.getPort();
+                        InetAddress address = packet.getAddress(); // Адрес клиента
+                        int port = packet.getPort();               // Порт клиента
                         
                         byte[] b = packet.getData();
                         String received = new String(b, "UTF-8").trim();
@@ -80,7 +81,7 @@ public class Server extends Thread{
                             }
                         }
                         
-                        String[] cmd = received.split(" ");
+                        String[] cmd = received.split(" "); // Команды и аругменты
                         
                         if(received.length() > 1)
                         if(received.charAt(0) == '%'){
