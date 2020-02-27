@@ -82,6 +82,7 @@ public class Server extends Thread{
                         
                         String[] cmd = received.split(" ");
                         
+                        if(received.length() > 1)
                         if(received.charAt(0) == '%'){
                             boolean uses = false;
                             if(cmd[0].contains("%nick")){ // fix stupid java
