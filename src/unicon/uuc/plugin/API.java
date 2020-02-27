@@ -38,6 +38,11 @@ public class API {
         this.sendString(sock, c.ipaddr, c.port, m);
     }
     
+    public void sendStringToIp(String _ip, int _port, String msg) throws IOException{
+        DatagramSocket sock = new DatagramSocket();
+        this.sendString(sock, InetAddress.getByName(_ip), _port, msg);
+    }
+    
     public void resetBlocks(){
         this.blockOnMsg = false;
         this.blockOnJoin = false;
