@@ -64,9 +64,20 @@ public class Server extends Thread{
                             this.clients.put(address.getHostAddress(), new Client(
                                     address, port
                             ));
+                            if(!api.blockOnJoin){
+                                api.log(this.clients.get(address.getHostAddress()).username + " подлючился к серверу.");
+                                api.sendString(dsocket, address, port, ": "+this.conf.get("welcome"));
+                            }
                             
-                            api.log(this.clients.get(address.getHostAddress()).username + " подлючился к серверу.");
-                            api.sendString(dsocket, address, port, ": "+this.conf.get("welcome"));
+                            
+                            for(int o = 0; o < plugins.size(); o++){
+                                try {
+                                    ((Invocable)plugins.get(o).engine).invokeFunction("onJoin", this.clients.get(address.getHostAddress()));
+                                } catch (ScriptException ex) {
+                                    Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+                                } catch (NoSuchMethodException ex) {
+                                }
+                            }
                         }
                         
                         String[] cmd = received.split(" ");

@@ -11,6 +11,7 @@ import unicon.uuc.types.Client;
 public class API {
     public Server server;
     public boolean blockOnMsg = false;
+    public boolean blockOnJoin = false;
     
     public API(Server _s){
         this.server = _s;
@@ -33,5 +34,10 @@ public class API {
     public void sendMsg(Client c, String m) throws SocketException, IOException{
         DatagramSocket sock = new DatagramSocket();
         this.sendString(sock, c.ipaddr, c.port, m);
+    }
+    
+    public void resetBlocks(){
+        this.blockOnMsg = false;
+        this.blockOnJoin = false;
     }
 }
