@@ -49,7 +49,6 @@ public class Server extends Thread{
                     PluginLoader loader = new PluginLoader();               // PluginLoader
                     ArrayList<Plugin> plugins = loader.loadPlugins(api);    // Загружаем плагины
                     
-                    
                     while(true){
                         
                         DatagramPacket packet = new DatagramPacket(new byte[1024], 1024);
@@ -99,7 +98,7 @@ public class Server extends Thread{
                             
                             for(int o = 0; o < plugins.size(); o++){
                                 try {
-                                    ((Invocable)plugins.get(o).engine).invokeFunction("onCommand", cmd, uses);
+                                    ((Invocable)plugins.get(o).engine).invokeFunction("onCommand", this.clients.get(address.getHostAddress()), cmd, uses);
                                 } catch (ScriptException ex) {
                                     Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
                                 } catch (NoSuchMethodException ex) {}
