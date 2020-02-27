@@ -1,7 +1,7 @@
 ![Screenshot](https://github.com/qbaddev/uuc/raw/master/image.png)
 
 # UUC
-UUC Серверная программа. Этот сервер использует UDP протокол.
+UUC Серверная программа. Этот сервер использует UDP протокол. <br/>
 [Plugin API](https://github.com/qbaddev/UUC/wiki/Plugin-API "Plugin API в Wiki")
 
 # Команды (начинаются с %)
