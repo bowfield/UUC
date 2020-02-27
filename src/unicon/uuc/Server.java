@@ -89,7 +89,6 @@ public class Server extends Thread{
                         }else if(cmd[0].contains("%find")){ // fix stupid java
                             api.sendString(dsocket, address, port, this.conf.get("name") + "\n" + this.conf.get("welcome") +
                                     "\n" + new Integer(this.clients.size()).toString() + "\n" + this.conf.get("maxclients"));
-                            //api.log();
                         }
                         
                         String msg = this.clients.get(address.getHostAddress()).username + " : " + received;
@@ -97,14 +96,10 @@ public class Server extends Thread{
                             String key = entry.getKey();
                             Client value = entry.getValue();
                             
-                            //System.out.println(key);
-                            //System.out.println(address.getHostAddress());
                             if(this.clients.get(address.getHostAddress()).username != value.username){ // fix stuid java
-                                //if(this.clients.get(address.getHostAddress()).port != port){
                                 if(!api.blockOnMsg){
-                                    api.sendString(dsocket, value.ipaddr, value.port, msg);
+                                    api.sendString(dsocket, value.ipaddr, value.port, msg + "\n");
                                 }
-                                //}
                             }
                             
                         }
@@ -114,16 +109,12 @@ public class Server extends Thread{
                         for(int o = 0; o < plugins.size(); o++){
                             try {
                                 ((Invocable)plugins.get(o).engine).invokeFunction("onMsg", this.clients.get(address.getHostAddress()), received);
-                                //System.out.println(api.blockOnMsg);
                             } catch (ScriptException ex) {
                                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-                            } catch (NoSuchMethodException ex) {
-                                //Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-                            }
+                            } catch (NoSuchMethodException ex) {}
                         }
                         
                     }
-                    //this.dsocket.close();
                     
                 } catch (UnknownHostException ex) {
                     Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);}
@@ -131,6 +122,7 @@ public class Server extends Thread{
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);}
         } catch (IOException ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);}
-    }
     
+    this.dsocket.close();
+    }
 }
