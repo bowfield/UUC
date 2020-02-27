@@ -2,6 +2,7 @@
 
 # UUC
 UUC Серверная программа. Этот сервер использует UDP протокол.
+[Plugin API](https://github.com/qbaddev/UUC/wiki/Plugin-API "Plugin API в Wiki")
 
 # Команды (начинаются с %)
 * %nick - установить ник в чате (на сеанс)
