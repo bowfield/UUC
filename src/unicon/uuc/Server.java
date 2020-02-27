@@ -82,13 +82,26 @@ public class Server extends Thread{
                         
                         String[] cmd = received.split(" ");
                         
-                        if(cmd[0].contains("%nick")){ // fix stupid java
-                            this.clients.get(address.getHostAddress()).username = cmd[1];
-                            api.log("Установлен ник " + received.split(" ")[1] + " для " + address.getHostAddress());
+                        if(received.charAt(0) == '%'){
+                            boolean uses = false;
+                            if(cmd[0].contains("%nick")){ // fix stupid java
+                                this.clients.get(address.getHostAddress()).username = cmd[1];
+                                api.log("Установлен ник " + received.split(" ")[1] + " для " + address.getHostAddress());
+                                uses = true;
                             
-                        }else if(cmd[0].contains("%find")){ // fix stupid java
-                            api.sendString(dsocket, address, port, this.conf.get("name") + "\n" + this.conf.get("welcome") +
-                                    "\n" + new Integer(this.clients.size()).toString() + "\n" + this.conf.get("maxclients"));
+                            }else if(cmd[0].contains("%find")){ // fix stupid java
+                                api.sendString(dsocket, address, port, this.conf.get("name") + "\n" + this.conf.get("welcome") +
+                                        "\n" + new Integer(this.clients.size()).toString() + "\n" + this.conf.get("maxclients"));
+                                uses = true;
+                            }
+                            
+                            for(int o = 0; o < plugins.size(); o++){
+                                try {
+                                    ((Invocable)plugins.get(o).engine).invokeFunction("onCommand", cmd, uses);
+                                } catch (ScriptException ex) {
+                                    Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+                                } catch (NoSuchMethodException ex) {}
+                            }
                         }
                         
                         String msg = this.clients.get(address.getHostAddress()).username + " : " + received;
