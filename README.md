@@ -1,4 +1,4 @@
-![Screenshot](https://github.com/qbaddev/uuc/raw/master/image.png)
+![Icon](https://github.com/qbaddev/uuc/raw/master/image.png)
 
 # UUC
 UUC Серверная программа. (Этот сервер использует UDP протокол) <br/>
