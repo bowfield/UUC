@@ -31,6 +31,7 @@ public class PluginLoader {
                     Invocable inv;
                     
                     engine.put("API", api);
+                    engine.put("JSEngine", this.engine);
             try {
                 engine.eval(Files.newBufferedReader(Paths.get(path.toString()), StandardCharsets.UTF_8));
             } catch (IOException ex) {
