@@ -12,9 +12,11 @@ public class API {
     public Server server;
     public boolean blockOnMsg = false;
     public boolean blockOnJoin = false;
+    public String encoding;
     
     public API(Server _s){
         this.server = _s;
+        this.encoding = System.getProperty("console.encoding", "utf-8");
     }
     public void log(String text){
         System.out.println(' '+text);
