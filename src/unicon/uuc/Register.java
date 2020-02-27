@@ -25,7 +25,7 @@ class Register {
         
         File f0 = new File("./plugins/");
         if(!f0.exists()){
-            new File("./plugins/").mkdir();
+            new File("./plugins/").mkdir(); // Создать папку для плагинов
         }
     }
 }
