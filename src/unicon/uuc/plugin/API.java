@@ -9,7 +9,7 @@ import unicon.uuc.Server;
 import unicon.uuc.types.Client;
 
 public class API {
-    public int APIV = 4;                // Версия PluginAPI
+    public int APIV = 5;                // Версия PluginAPI
     
     public Server server;               // Класс сервера
     public boolean blockOnMsg = false;  // Блокировка стандартной обработки сообщений
