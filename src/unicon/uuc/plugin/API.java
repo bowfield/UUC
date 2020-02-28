@@ -5,6 +5,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.script.Invocable;
@@ -12,6 +13,7 @@ import javax.script.ScriptException;
 import unicon.uuc.PluginLoader;
 import unicon.uuc.Server;
 import unicon.uuc.types.Client;
+import unicon.uuc.types.Plugin;
 
 public class API {
     public int APIV = 6;                // Версия PluginAPI
@@ -21,9 +23,11 @@ public class API {
     public boolean blockOnMsg = false;  // Блокировка стандартной обработки сообщений
     public boolean blockOnJoin = false; // Блокировка стандартной обработки входа
     public String encoding;             // Кодировка вывода в консоль
+    public ArrayList<Plugin> pluginsList;
     
-    public API(Server _s){
+    public API(Server _s, ArrayList<Plugin> plugins){
         this.server = _s;
+        this.pluginsList = plugins;
         this.encoding = System.getProperty("console.encoding", "utf-8"); // UTF-8 
     }
     
@@ -75,15 +79,15 @@ public class API {
     }
     
     // Создание нового потока
-    public void newThread(String func){
+    public void newThread(String func, int PlugID){
         new Thread(() -> {
+            Invocable inv = ((Invocable)this.server.plugins.get(PlugID).engine);
+            
             try {
-                ((Invocable)this.ploader.engine).invokeFunction(func);
+                inv.invokeFunction(func);
             } catch (ScriptException ex) {
                 Logger.getLogger(API.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (NoSuchMethodException ex) {
-            }
-                
+            } catch (NoSuchMethodException ex) {}
         }).start();
     }
 }
