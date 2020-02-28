@@ -13,4 +13,8 @@ public class Client {
         this.ipaddr = ipaddr;
         this.port = port;
     }
+    
+    public String getIp(){
+        return this.ipaddr.getHostAddress();
+    }
 }

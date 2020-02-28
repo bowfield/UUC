@@ -24,6 +24,7 @@ public class Server extends Thread{
     public SPrefs conf;              // Конфиг сервера
     public DatagramSocket dsocket;   // Сокет сервера
     public HashMap<String, Client> clients = new HashMap<String, Client>(); // Клиенты
+    ArrayList<Plugin> plugins;
     
     public Server(Register reg){
         this.register = reg;
@@ -38,16 +39,19 @@ public class Server extends Thread{
                 try{
                     this.conf = new SPrefs(); // Конфиги
                     this.port = (int) Double.parseDouble(this.conf.get("port"));
-                    InetAddress in = InetAddress.getByName(this.conf.get("addr"));
                     
                     System.out.println("# Сервер запущен на порту " +
-                            this.port + "\n -> " + this.conf.get("name"));
+                            this.port + " | " + this.conf.get("name"));
                     this.dsocket = new DatagramSocket(this.port); // Создание UDP сокета
                     
                     System.out.println("# Загрузка плагинов...");
+                    
                     API api = new API(this);                                // PluginAPI
                     PluginLoader loader = new PluginLoader();               // PluginLoader
-                    ArrayList<Plugin> plugins = loader.loadPlugins(api);    // Загружаем плагины
+                    api.ploader = loader;
+                    plugins = loader.loadPlugins(api);    // Загружаем плагины
+                    
+                    System.out.println("# Загружено плагинов: " + new Integer(plugins.size()).toString());
                     
                     while(true){
                         
@@ -60,7 +64,22 @@ public class Server extends Thread{
                         byte[] b = packet.getData();
                         String received = new String(b, "UTF-8").trim();
                         
-                        if(!this.clients.containsKey(address.getHostAddress())){
+                        this.loadMessage(address, port, received, api);
+                        
+                    }
+                    
+                } catch (UnknownHostException ex) {
+                    Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);}
+            } catch (SocketException ex) {
+                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);}
+        } catch (IOException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);}
+    
+    this.dsocket.close();
+    }
+    
+    public void loadMessage(InetAddress address, int port, String received, API api) throws IOException{
+        if(!this.clients.containsKey(address.getHostAddress())){
                             this.clients.put(address.getHostAddress(), new Client(
                                     address, port
                             ));
@@ -70,9 +89,9 @@ public class Server extends Thread{
                             }
                             
                             
-                            for(int o = 0; o < plugins.size(); o++){
+                            for(int o = 0; o < this.plugins.size(); o++){
                                 try {
-                                    ((Invocable)plugins.get(o).engine).invokeFunction("onJoin", this.clients.get(address.getHostAddress()));
+                                    ((Invocable)this.plugins.get(o).engine).invokeFunction("onJoin", this.clients.get(address.getHostAddress()));
                                 } catch (ScriptException ex) {
                                     Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
                                 } catch (NoSuchMethodException ex) {
@@ -96,9 +115,9 @@ public class Server extends Thread{
                                 uses = true;
                             }
                             
-                            for(int o = 0; o < plugins.size(); o++){
+                            for(int o = 0; o < this.plugins.size(); o++){
                                 try {
-                                    ((Invocable)plugins.get(o).engine).invokeFunction("onCommand", this.clients.get(address.getHostAddress()), cmd, uses);
+                                    ((Invocable)this.plugins.get(o).engine).invokeFunction("onCommand", this.clients.get(address.getHostAddress()), cmd, uses);
                                 } catch (ScriptException ex) {
                                     Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
                                 } catch (NoSuchMethodException ex) {}
@@ -106,37 +125,27 @@ public class Server extends Thread{
                         }
                         
                         String msg = this.clients.get(address.getHostAddress()).username + " : " + received;
-                        for(Map.Entry<String, Client> entry : clients.entrySet()) {
-                            String key = entry.getKey();
-                            Client value = entry.getValue();
+                        if(!api.blockOnMsg){
+                            for(Map.Entry<String, Client> entry : clients.entrySet()) {
+                                String key = entry.getKey();
+                                Client value = entry.getValue();
                             
-                            if(this.clients.get(address.getHostAddress()).username != value.username){ // fix stuid java
-                                if(!api.blockOnMsg){
-                                    api.sendString(dsocket, value.ipaddr, value.port, msg + "\n");
+                                if(this.clients.get(address.getHostAddress()).username != value.username){ // fix stuid java
+                                    if(!api.blockOnMsg){
+                                        api.sendString(dsocket, value.ipaddr, value.port, msg + "\n");
+                                    }
                                 }
                             }
-                            
                         }
                         
                         api.log(msg);
                         
-                        for(int o = 0; o < plugins.size(); o++){
+                        for(int o = 0; o < this.plugins.size(); o++){
                             try {
-                                ((Invocable)plugins.get(o).engine).invokeFunction("onMsg", this.clients.get(address.getHostAddress()), received);
+                                ((Invocable)this.plugins.get(o).engine).invokeFunction("onMsg", this.clients.get(address.getHostAddress()), received);
                             } catch (ScriptException ex) {
                                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
                             } catch (NoSuchMethodException ex) {}
                         }
-                        
-                    }
-                    
-                } catch (UnknownHostException ex) {
-                    Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);}
-            } catch (SocketException ex) {
-                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);}
-        } catch (IOException ex) {
-            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);}
-    
-    this.dsocket.close();
     }
 }
