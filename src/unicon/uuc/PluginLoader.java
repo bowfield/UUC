@@ -15,27 +15,29 @@ import javax.script.ScriptException;
 import unicon.uuc.types.Plugin;
 import unicon.uuc.plugin.API;
 import unicon.uuc.plugin.NET.NETClass;
+import java.lang.Thread;
 
 public class PluginLoader {
     public String plugindir = "./plugins/";
-    public ScriptEngineManager manager = new ScriptEngineManager();
-    public ScriptEngine engine = manager.getEngineByName("JavaScript");
+    ScriptEngineManager manager;
+    ScriptEngine engine;
     
-    public ArrayList<Plugin> loadPlugins(final API api) throws IOException{
-        ArrayList<Plugin> list = new ArrayList<Plugin>();
-        
+    public void loadPlugins(ArrayList<Plugin> list, final API api) throws IOException{
         Files.list(new File(plugindir).toPath())
                 .limit(10)
                 .forEach(path -> {
+                    manager = new ScriptEngineManager();
+                    engine = manager.getEngineByName("JavaScript");
+                    
                     String filen = path.getFileName().toString();
-                    //System.out.println(path);
                     Invocable inv;
+                    
+                    NETClass netclass = new NETClass();
                     
                     engine.put("API", api);
                     engine.put("JSEngine", this.engine);
-                    
-                    NETClass netclass = new NETClass();
                     engine.put("NET", netclass);
+                    engine.put("_PID", list.size());
                     
                     
             try {
@@ -48,14 +50,13 @@ public class PluginLoader {
                     inv = (Invocable) engine;
                     
                     
-                    
+            
+            list.add(new Plugin(api, filen, engine));    
             try {
                 inv.invokeFunction("onLoad");
             } catch (ScriptException ex) {
                 Logger.getLogger(PluginLoader.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (NoSuchMethodException ex) {
-                //Logger.getLogger(PluginLoader.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            } catch (NoSuchMethodException ex) {}
             
             
             new Thread(() -> {
@@ -68,10 +69,6 @@ public class PluginLoader {
                     } catch (NoSuchMethodException ex) { }
                 }
             }).start();
-           list.add(new Plugin(api, filen, engine));
         });
-        
-        
-        return list;
     }
 }
