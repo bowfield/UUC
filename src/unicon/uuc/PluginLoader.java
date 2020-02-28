@@ -14,11 +14,12 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import unicon.uuc.types.Plugin;
 import unicon.uuc.plugin.API;
+import unicon.uuc.plugin.NET.NETClass;
 
 public class PluginLoader {
     public String plugindir = "./plugins/";
-    ScriptEngineManager manager = new ScriptEngineManager();
-    ScriptEngine engine = manager.getEngineByName("JavaScript");
+    public ScriptEngineManager manager = new ScriptEngineManager();
+    public ScriptEngine engine = manager.getEngineByName("JavaScript");
     
     public ArrayList<Plugin> loadPlugins(final API api) throws IOException{
         ArrayList<Plugin> list = new ArrayList<Plugin>();
@@ -32,6 +33,11 @@ public class PluginLoader {
                     
                     engine.put("API", api);
                     engine.put("JSEngine", this.engine);
+                    
+                    NETClass netclass = new NETClass();
+                    engine.put("NET", netclass);
+                    
+                    
             try {
                 engine.eval(Files.newBufferedReader(Paths.get(path.toString()), StandardCharsets.UTF_8));
             } catch (IOException ex) {
@@ -50,6 +56,18 @@ public class PluginLoader {
             } catch (NoSuchMethodException ex) {
                 //Logger.getLogger(PluginLoader.class.getName()).log(Level.SEVERE, null, ex);
             }
+            
+            
+            new Thread(() -> {
+                boolean thrun = true;
+                while(thrun){
+                    try {
+                        inv.invokeFunction("threadLoop", thrun);
+                    } catch (ScriptException ex) {
+                        Logger.getLogger(PluginLoader.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (NoSuchMethodException ex) { }
+                }
+            }).start();
            list.add(new Plugin(api, filen, engine));
         });
         
