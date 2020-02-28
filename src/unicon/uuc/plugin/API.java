@@ -5,13 +5,19 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.script.Invocable;
+import javax.script.ScriptException;
+import unicon.uuc.PluginLoader;
 import unicon.uuc.Server;
 import unicon.uuc.types.Client;
 
 public class API {
-    public int APIV = 5;                // Версия PluginAPI
+    public int APIV = 6;                // Версия PluginAPI
     
     public Server server;               // Класс сервера
+    public PluginLoader ploader;
     public boolean blockOnMsg = false;  // Блокировка стандартной обработки сообщений
     public boolean blockOnJoin = false; // Блокировка стандартной обработки входа
     public String encoding;             // Кодировка вывода в консоль
@@ -51,6 +57,12 @@ public class API {
         this.sendString(sock, InetAddress.getByName(_ip), _port, msg);
     }
     
+    // Обрабатывает сообщение
+    public void loadMessage(String addr, int port, String received) throws IOException{
+        InetAddress address = InetAddress.getByName(addr);
+        this.server.loadMessage(address, port, received, this);
+    }
+    
     // Сбрашивает все блокировки
     public void resetBlocks(){
         this.blockOnMsg = false;
@@ -60,5 +72,18 @@ public class API {
     // Возращает версию PluginAPI
     public int getVersion(){
         return this.APIV;
+    }
+    
+    // Создание нового потока
+    public void newThread(String func){
+        new Thread(() -> {
+            try {
+                ((Invocable)this.ploader.engine).invokeFunction(func);
+            } catch (ScriptException ex) {
+                Logger.getLogger(API.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (NoSuchMethodException ex) {
+            }
+                
+        }).start();
     }
 }
