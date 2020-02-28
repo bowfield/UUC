@@ -19,12 +19,11 @@ import unicon.uuc.types.Plugin;
 
 public class Server extends Thread{
     public Register register = null; // Регистратор
-    public String addr = null;       // IP-адрес сервера
     public int port = 0;             // Порт сервера
     public SPrefs conf;              // Конфиг сервера
     public DatagramSocket dsocket;   // Сокет сервера
     public HashMap<String, Client> clients = new HashMap<String, Client>(); // Клиенты
-    ArrayList<Plugin> plugins;
+    public ArrayList<Plugin> plugins;
     
     public Server(Register reg){
         this.register = reg;
@@ -46,10 +45,11 @@ public class Server extends Thread{
                     
                     System.out.println("# Загрузка плагинов...");
                     
-                    API api = new API(this);                                // PluginAPI
+                    this.plugins = new ArrayList<Plugin>();
+                    API api = new API(this, this.plugins);                                // PluginAPI
                     PluginLoader loader = new PluginLoader();               // PluginLoader
                     api.ploader = loader;
-                    plugins = loader.loadPlugins(api);    // Загружаем плагины
+                    loader.loadPlugins(this.plugins, api);    // Загружаем плагины
                     
                     System.out.println("# Загружено плагинов: " + new Integer(plugins.size()).toString());
                     
