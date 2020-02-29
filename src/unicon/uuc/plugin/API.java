@@ -16,7 +16,7 @@ import unicon.uuc.types.Client;
 import unicon.uuc.types.Plugin;
 
 public class API {
-    public int APIV = 7;                // Версия PluginAPI
+    final public static int APIV = 7;   // Версия PluginAPI
     
     public Server server;               // Класс сервера
     public PluginLoader ploader;
