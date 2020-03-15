@@ -1,6 +1,6 @@
 ![Icon](https://github.com/qbaddev/uuc/raw/master/image.png)
 
-# UUC
+# UUC OLD
 UUC Серверная программа. (Этот сервер использует UDP протокол) <br/>
 [API плагинов](https://github.com/qbaddev/UUC/wiki/Plugin-API "Plugin API в Wiki")
 [Хранилище плагинов](https://qbaddev.github.io/uuc-plugins/ "Plugins Archive")
